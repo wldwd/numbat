@@ -21,7 +21,11 @@ html {
   margin: 0;
   padding: 0;
 }
-
+.site-logo {
+  height: 80px;
+  width: auto;
+  margin-bottom: 0.5rem;
+}
 body {
   font-family: "Fira Code", "JetBrains Mono", Monaco, Consolas, "Ubuntu Mono",
     monospace;
@@ -65,7 +69,16 @@ body {
   font-weight: 300;
   margin: 0;
 }
+.site-nav {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
 
+.site-nav a {
+  text-decoration: none;
+}
 /* Sections */
 section {
   margin-bottom: 50px;
