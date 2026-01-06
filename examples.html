@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examples | Numbat Geospatial</title>
+    <link rel="stylesheet" href="numbat.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="site-header">
+        <h1>
+          <a href="/" style="text-decoration: none; color: inherit"
+            >Numbat Geospatial</a
+          >
+        </h1>
+        <p class="tagline">Practical mapping for regional organisations</p>
+      </header>
+
+      <section class="examples">
+        <h2>Examples</h2>
+
+        <article class="example-item">
+          <h3>Places of Interest Web Map — Shire of West Arthur</h3>
+          <p>
+            Interactive map of visitor attractions for a regional WA shire.
+            Built to demonstrate how councils can present places of interest in
+            a clear, mobile-friendly format. Data sourced from the Shire's
+            website.
+          </p>
+          <iframe
+            src="/west-arthur.html"
+            width="100%"
+            height="450"
+            style="border: 1px solid #ccc; border-radius: 4px"
+            loading="lazy"
+            title="West Arthur Places of Interest Map"
+          ></iframe>
+        </article>
+
+        <article class="example-item">
+          <h3>Grant Application Context Maps — Coolbellup Shops</h3>
+          <p>
+            Static maps showing road safety data and walkable catchment for a
+            local streets improvement project. Designed to support grant
+            applications by providing clear spatial context for decision-makers.
+          </p>
+          <div
+            style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem"
+          >
+            <a href="/Cooby_Shops_Road_Safety.png" target="_blank">
+              <img
+                src="/Cooby_Shops_Road_Safety.png"
+                alt="Coolbellup Shops Road Safety Context"
+                style="
+                  height: 180px;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                "
+              />
+            </a>
+            <a href="/Cooby_Shops_Walkable_Catchment.png" target="_blank">
+              <img
+                src="/Cooby_Shops_Walkable_Catchment.png"
+                alt="Coolbellup Shops Walkable Catchment"
+                style="
+                  height: 180px;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                "
+              />
+            </a>
+          </div>
+        </article>
+
+        <article class="example-item">
+          <h3>PARKHOUND — Dog Park Finder</h3>
+          <p>
+            Web mapping application for finding dog parks across Perth. Data
+            sourced from council APIs and manually digitised from PDF maps,
+            cleaned and enriched with details like enclosure status. Built with
+            OpenLayers and deployed on GitHub Pages.
+          </p>
+          <a href="https://wldwd.github.io/PARKHOUND/" target="_blank">
+            <img
+              src="/parkhound-screenshot.png"
+              alt="PARKHOUND Dog Park Finder screenshot"
+              style="
+                max-width: 100%;
+                height: auto;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-top: 1rem;
+              "
+            />
+          </a>
+          <p style="margin-top: 0.75rem">
+            <a
+              href="https://wldwd.github.io/PARKHOUND/"
+              target="_blank"
+              rel="noopener"
+            >
+              View PARKHOUND →
+            </a>
+          </p>
+        </article>
+      </section>
+
+      <section class="cta-section" style="margin-top: 2rem">
+        <p>Have a project in mind?</p>
+        <a
+          href="https://cal.com/numbat/15min"
+          target="_blank"
+          rel="noopener"
+          class="cta-button"
+          >Book a Quick Chat</a
+        >
+      </section>
+
+      <footer class="site-footer">
+        &copy; 2025 Numbat Geospatial | Perth, Western Australia
+      </footer>
+    </div>
+  </body>
+</html>
