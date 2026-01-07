@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wild Gravel Trail</title>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+      #attribution {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        font-family: sans-serif;
+        font-size: 11px;
+        color: #666;
+      }
+
+      #legend {
+        position: absolute;
+        bottom: 30px;
+        left: 10px;
+        background: white;
+        padding: 12px;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        font-family: sans-serif;
+        font-size: 13px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .legend-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .legend-line {
+        width: 20px;
+        height: 4px;
+        margin-right: 8px;
+        border-radius: 2px;
+      }
+
+      .legend-marker {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+        margin-right: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .stage-marker {
+        background: #06b6d4;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        color: #fff;
+        font-weight: bold;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        white-space: nowrap;
+        padding: 4px 8px;
+      }
+
+      .mapboxgl-popup-content {
+        max-width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .popup-content h3 {
+        margin: 0 0 8px 0;
+      }
+      .popup-content img {
+        width: 100%;
+        max-width: 280px;
+        margin: 8px 0;
+        border-radius: 4px;
+      }
+      .popup-content p {
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .popup-content .stats {
+        font-weight: bold;
+        color: #666;
+      }
+      .popup-content .section-title {
+        font-weight: bold;
+        margin-top: 12px;
+        color: #333;
+      }
+      .popup-content a {
+        color: #9333ea;
+      }
+      .popup-content .links {
+        margin-top: 12px;
+      }
+      .popup-content .links a {
+        display: inline-block;
+        margin-right: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <div id="attribution">
+      Data: Wild Gravel, Shire of Gnowangerup<br />
+      Map: Numbat Geospatial
+    </div>
+
+    <div id="legend">
+      <div class="legend-item">
+        <span class="legend-line" style="background: #9333ea"></span>Wild Gravel
+        Trail
+      </div>
+      <div class="legend-item">
+        <span class="legend-line" style="background: #ec4899"></span>Selected
+        Stage
+      </div>
+      <div class="legend-item">
+        <span class="legend-marker" style="background: #06b6d4">1</span>Stage
+        Marker
+      </div>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.js"></script>
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoibnVtYmF0cHJvamVjdHMiLCJhIjoiY21rMjRwcmVwMGJ4ejNkczd3bW1jZHc1ZyJ9.a9PuI5n8AyG7-BHZvsyeQg";
+
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/outdoors-v12",
+        center: [117.85, -34.15],
+        zoom: 8,
+      });
+
+      map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
+      map.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+      let stagesData = null;
+      let routeData = null;
+      let markers = [];
+      let currentPopup = null;
+
+      // Map stage names to route feature indices
+      const stageToRouteIndex = {
+        "Stage 1": 0,
+        "Stage 2": 1,
+        "Stage 3": 5,
+        "Stage 4": 2,
+        "Stage 5": 4,
+        "Stage 6": 3,
+      };
+
+      function getStageLabel(stage) {
+        if (stage === "Start & Finish") return "Gnowangerup";
+        return stage.replace("Stage ", "");
+      }
+
+      function highlightStage(stageNum) {
+        if (!routeData) return;
+
+        const highlightFeatures = routeData.features.filter((f, i) => {
+          const name = f.properties.name || "";
+          return name.includes(`Stage ${stageNum}`);
+        });
+
+        if (highlightFeatures.length > 0) {
+          map.getSource("route-highlight").setData({
+            type: "FeatureCollection",
+            features: highlightFeatures,
+          });
+        }
+      }
+
+      function clearHighlight() {
+        if (map.getSource("route-highlight")) {
+          map.getSource("route-highlight").setData({
+            type: "FeatureCollection",
+            features: [],
+          });
+        }
+      }
+
+      function createPopupContent(props) {
+        let html = `<div class="popup-content">`;
+        html += `<h3>${props.name}</h3>`;
+
+        if (props.photo_url) {
+          html += `<img src="${props.photo_url}" alt="${props.name}">`;
+        }
+
+        if (props.distance || props.climbing) {
+          html += `<p class="stats">`;
+          if (props.distance) html += `Distance: ${props.distance}`;
+          if (props.distance && props.climbing) html += ` | `;
+          if (props.climbing) html += `Climbing: ${props.climbing}`;
+          html += `</p>`;
+        }
+
+        if (props.description) {
+          html += `<p>${props.description}</p>`;
+        }
+
+        if (props["route notes"]) {
+          html += `<p class="section-title">Route Notes:</p>`;
+          html += `<p>${props["route notes"]}</p>`;
+        }
+
+        if (props["accomodation and supplies"]) {
+          html += `<p class="section-title">Accommodation & Supplies:</p>`;
+          html += `<p>${props["accomodation and supplies"]}</p>`;
+        }
+
+        html += `<div class="links">`;
+        if (props.gpx) {
+          html += `<a href="${props.gpx}" target="_blank">Download GPX</a>`;
+        }
+        if (props.strava) {
+          html += `<a href="${props.strava}" target="_blank">View on Strava</a>`;
+        }
+        html += `</div>`;
+        html += `</div>`;
+
+        return html;
+      }
+
+      map.on("load", async () => {
+        // Load route data
+        const routeResponse = await fetch("route.geojson");
+        routeData = await routeResponse.json();
+
+        // Load stages data
+        const stagesResponse = await fetch("stages.geojson");
+        stagesData = await stagesResponse.json();
+
+        // Add route source and layer (default purple)
+        map.addSource("route", {
+          type: "geojson",
+          data: routeData,
+        });
+
+        map.addLayer({
+          id: "route-line",
+          type: "line",
+          source: "route",
+          paint: {
+            "line-color": "#9333ea",
+            "line-width": 4,
+          },
+        });
+
+        // Add highlight source and layer (pink, on top)
+        map.addSource("route-highlight", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+
+        map.addLayer({
+          id: "route-highlight-line",
+          type: "line",
+          source: "route-highlight",
+          paint: {
+            "line-color": "#ec4899",
+            "line-width": 6,
+          },
+        });
+
+        // Add stage markers
+        stagesData.features.forEach((feature) => {
+          const props = feature.properties;
+          const coords = feature.geometry.coordinates;
+          const label = getStageLabel(props.stage);
+
+          // Create marker element
+          const el = document.createElement("div");
+          el.className = "stage-marker";
+          el.textContent = label;
+
+          // Adjust size for longer labels
+          if (label === "Gnowangerup") {
+            el.style.minWidth = "80px";
+            el.style.fontSize = "9px";
+          } else {
+            el.style.width = "24px";
+            el.style.height = "24px";
+          }
+
+          const marker = new mapboxgl.Marker(el).setLngLat(coords).addTo(map);
+
+          el.addEventListener("click", () => {
+            // Close existing popup
+            if (currentPopup) currentPopup.remove();
+
+            // Clear previous highlight
+            clearHighlight();
+
+            // Highlight corresponding stage segment
+            const stageNum = props.stage.replace("Stage ", "");
+            if (stageNum !== "Start & Finish") {
+              highlightStage(stageNum);
+            }
+
+            // Show popup
+            currentPopup = new mapboxgl.Popup({ offset: 25 })
+              .setLngLat(coords)
+              .setHTML(createPopupContent(props))
+              .addTo(map);
+
+            currentPopup.on("close", () => {
+              clearHighlight();
+            });
+          });
+
+          markers.push(marker);
+        });
+
+        // Fit map to route bounds
+        const bounds = new mapboxgl.LngLatBounds();
+        routeData.features.forEach((feature) => {
+          feature.geometry.coordinates.forEach((coord) => {
+            bounds.extend([coord[0], coord[1]]);
+          });
+        });
+        map.fitBounds(bounds, { padding: 50 });
+      });
+    </script>
+  </body>
+</html>
