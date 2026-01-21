@@ -46,6 +46,7 @@ map.on("load", () => {
     paint: {
       "line-color": "#1d4ed8",
       "line-width": 3,
+      "line-dasharray": [2, 2],
     },
   });
 
@@ -62,6 +63,7 @@ map.on("load", () => {
     paint: {
       "line-color": "#d946ef",
       "line-width": 3,
+      "line-dasharray": [2, 2],
     },
   });
 
