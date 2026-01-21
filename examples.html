@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Examples | Numbat Geospatial</title>
     <link rel="stylesheet" href="numbat.css" />
+    <style>
+      .map-frame {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 1rem;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -33,21 +42,9 @@
             website, with links to Google Maps for directions and Trails WA for
             more information.
           </p>
-          <a href="/west-arthur.html" target="_blank" rel="noopener">
-            <img
-              src="/west-arthur-screenshot.png"
-              alt="West Arthur Places of Interest Map screenshot"
-              style="
-                max-width: 100%;
-                height: auto;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin-top: 1rem;
-              "
-            />
-          </a>
+          <iframe src="/west-arthur/" class="map-frame"></iframe>
           <p style="margin-top: 0.75rem">
-            <a href="/west-arthur.html" target="_blank" rel="noopener">
+            <a href="/west-arthur/" target="_blank" rel="noopener">
               Open full map →
             </a>
           </p>
