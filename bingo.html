@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Transport Advocate Bingo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.staticdelivr.com/gfonts/css2?family=Fira+Code:wght@300..700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+    />
+    <style>
+      :root {
+        --background: #1a170f;
+        --foreground: #eceae5;
+        --accent: #e94fd8;
+        --good: #4fc8e9;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Fira Code", "JetBrains Mono", Monaco, Consolas, monospace;
+        font-size: 1rem;
+        line-height: 1.54em;
+        background-color: var(--background);
+        color: var(--foreground);
+        min-height: 100vh;
+        padding: 12px;
+        text-rendering: optimizeLegibility;
+        -webkit-text-size-adjust: 100%;
+      }
+      .container {
+        max-width: 520px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-family: "VT323", monospace;
+        font-size: 2.4rem;
+        text-align: center;
+        margin-bottom: 4px;
+        color: var(--foreground);
+      }
+      .subtitle {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--accent);
+        font-weight: 300;
+        margin-bottom: 16px;
+      }
+      .name-section {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .name-section input {
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+        padding: 8px 14px;
+        border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
+        background: transparent;
+        color: var(--foreground);
+        text-align: center;
+        width: 220px;
+        transition: border-color 0.2s ease;
+      }
+      .name-section input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+      }
+      .name-section input::placeholder {
+        color: color-mix(in srgb, var(--foreground) 40%, transparent);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+        margin-bottom: 14px;
+        border: 3px solid var(--accent);
+        overflow: hidden;
+      }
+      .cell {
+        background: color-mix(in srgb, var(--foreground) 5%, transparent);
+        padding: 6px 4px;
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.65rem;
+        line-height: 1.3;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.15s;
+        border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .cell:hover {
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+      }
+      .cell:active {
+        opacity: 0.8;
+      }
+      .cell.checked {
+        background: color-mix(in srgb, var(--accent) 25%, transparent);
+        color: var(--foreground);
+        border-color: var(--accent);
+      }
+      .cell.good-word {
+        border-color: var(--good);
+        color: var(--good);
+      }
+      .cell.good-word:hover {
+        background: color-mix(in srgb, var(--good) 10%, transparent);
+      }
+      .cell.good-word.checked {
+        background: color-mix(in srgb, var(--good) 30%, transparent);
+        border-color: var(--good);
+        color: var(--foreground);
+      }
+      .cell.free {
+        background: var(--accent);
+        color: var(--background);
+        font-weight: 600;
+        font-size: 0.7rem;
+      }
+      .cell.bingo-line {
+        animation: glow 0.6s ease-in-out infinite alternate;
+      }
+      @keyframes glow {
+        from {
+          box-shadow: inset 0 0 8px var(--accent);
+        }
+        to {
+          box-shadow: inset 0 0 20px var(--accent);
+        }
+      }
+      .cell.good-word.bingo-line {
+        animation: glowGood 0.6s ease-in-out infinite alternate;
+      }
+      @keyframes glowGood {
+        from {
+          box-shadow: inset 0 0 8px var(--good);
+        }
+        to {
+          box-shadow: inset 0 0 20px var(--good);
+        }
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .btn {
+        font-family: "Fira Code", monospace;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 6px 18px;
+        border: 2px solid var(--accent);
+        background: transparent;
+        color: var(--accent);
+        cursor: pointer;
+        transition: background 0.15s linear;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn:hover {
+        background: color-mix(in srgb, var(--accent) 15%, transparent);
+      }
+      .btn:active {
+        background: var(--accent);
+        color: var(--background);
+      }
+
+      .banner {
+        text-align: center;
+        font-family: "VT323", monospace;
+        font-size: 1.6rem;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: var(--accent);
+        color: var(--background);
+        font-weight: 600;
+        display: none;
+      }
+      .banner.show {
+        display: block;
+        animation: popIn 0.3s ease-out;
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent);
+        color: var(--background);
+        padding: 10px 20px;
+        font-family: "Fira Code", monospace;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: none;
+        z-index: 100;
+      }
+      .toast.show {
+        display: block;
+        animation: fadeInOut 2s ease-in-out forwards;
+      }
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(10px);
+        }
+        15% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .score {
+        text-align: center;
+        font-size: 0.8rem;
+        color: color-mix(in srgb, var(--foreground) 60%, transparent);
+        margin-bottom: 12px;
+      }
+      .score .bonus {
+        color: var(--good);
+      }
+      .legend {
+        text-align: center;
+        font-size: 0.7rem;
+        color: color-mix(in srgb, var(--foreground) 45%, transparent);
+        margin-bottom: 12px;
+      }
+      .legend .good-label {
+        color: var(--good);
+      }
+      .footer {
+        text-align: center;
+        font-size: 0.75rem;
+        color: color-mix(in srgb, var(--foreground) 35%, transparent);
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid
+          color-mix(in srgb, var(--foreground) 20%, transparent);
+      }
+
+      @media (max-width: 400px) {
+        h1 {
+          font-size: 1.8rem;
+        }
+        .cell {
+          min-height: 62px;
+          font-size: 0.58rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Transport Planning Bingo</h1>
+      <p class="subtitle">Tap when you hear it</p>
+
+      <div class="name-section">
+        <input
+          type="text"
+          id="playerName"
+          placeholder="Your name"
+          maxlength="20"
+        />
+      </div>
+
+      <div class="banner" id="banner">BINGO!</div>
+
+      <div class="score" id="score">0 pts</div>
+      <div class="legend">
+        <span class="good-label">Coloured squares</span> = bonus points (x2)
+      </div>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="buttons">
+        <button class="btn" onclick="shareResult()">Share result</button>
+        <button class="btn" onclick="newCard()">New card</button>
+      </div>
+
+      <p class="footer">You're welcome :)</p>
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+      const regularSquares = [
+        "VRU",
+        "Vulnerable Road User",
+        "85th percentile",
+        "Turning circle",
+        "ROI",
+        "Business case",
+        "KSI rates",
+        "SPUI",
+        "TMP",
+        "AM/PM peak",
+        "Major project",
+        "Offset",
+        "Mitigation",
+        "Level of Service",
+        "AADT",
+        "V/C ratio",
+        "At capacity",
+        "SIDRA",
+        "Swept path",
+        "Design vehicle",
+        "Sight distance",
+        "Clear zone",
+        "Warrants",
+        "Desire line",
+        "Road hierarchy",
+        "Kinetic energy transfer",
+        "Residential amenity",
+        "Self-explaining road",
+        "Safe System",
+        "Movement and place",
+        "Shared zone",
+        "Shared responsibility",
+        "Beyond the scope",
+        "Further investigation required",
+        "Subject to funding",
+        "Unfunded",
+        "Forming a business case",
+        "Not best practice",
+        "Stakeholder engagement",
+        "Community consultation",
+        "Maintain traffic flow",
+        "Obstruct flow of traffic",
+        "Induced demand",
+        "Intersection performance",
+        "Insufficient evidence",
+        "Operational efficiency",
+        "Design life",
+        "Fit for purpose",
+        "Noted for future consideration",
+        "Pedestrian-cyclist conflict",
+        "Traffic calming",
+        "Establish a working group",
+        "PTA will say no",
+        "Main Roads will say no",
+        "It's with the Minister",
+        "Vibrant",
+        "SPUI",
+        "Roundabout",
+        "Grade separation",
+        "At grade",
+      ];
+
+      const goodSquares = [
+        "Modal filter",
+        "Path priority",
+        "Safer speeds",
+        "Streets are for everyone",
+        "People walking",
+        "People bike riding",
+        "Nicer neighbourhoods",
+        "School street",
+        "Filtered permeability",
+        "Low-traffic neighbourhood",
+        "Place-based",
+        "Walkable",
+        "Desire lines",
+        "Safe access for everyone",
+        "Healthy streets",
+        "Local streets",
+        "Streetscape upgrade",
+        "Street life",
+        "Climate change",
+        "Reducing emissions",
+        "Urban canopy",
+        "Green space",
+        "Cargo bike",
+        "Road space reallocation",
+      ];
+
+      let squares = [];
+      let isGood = Array(25).fill(false);
+      let checked = Array(25).fill(false);
+      let bingoLines = [];
+
+      function shuffle(a) {
+        const b = [...a];
+        for (let i = b.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [b[i], b[j]] = [b[j], b[i]];
+        }
+        return b;
+      }
+
+      function generateCard() {
+        const numGood = 3 + Math.floor(Math.random() * 3); // 3-5
+        const pickedGood = shuffle(goodSquares).slice(0, numGood);
+        const pickedRegular = shuffle(regularSquares).slice(0, 24 - numGood);
+
+        const combined = [
+          ...pickedGood.map((t) => ({ text: t, good: true })),
+          ...pickedRegular.map((t) => ({ text: t, good: false })),
+        ];
+        const shuffled = shuffle(combined);
+
+        shuffled.splice(12, 0, { text: "FREE\nSPACE", good: false });
+
+        squares = shuffled.map((s) => s.text);
+        isGood = shuffled.map((s) => s.good);
+      }
+
+      const winLines = [];
+      for (let r = 0; r < 5; r++)
+        winLines.push([0, 1, 2, 3, 4].map((c) => r * 5 + c));
+      for (let c = 0; c < 5; c++)
+        winLines.push([0, 1, 2, 3, 4].map((r) => r * 5 + c));
+      winLines.push([0, 6, 12, 18, 24]);
+      winLines.push([4, 8, 12, 16, 20]);
+
+      function checkBingo() {
+        bingoLines = [];
+        for (const line of winLines) {
+          if (line.every((i) => checked[i])) bingoLines.push(line);
+        }
+        return bingoLines.length > 0;
+      }
+
+      function getScore() {
+        let pts = 0;
+        let bonus = 0;
+        for (let i = 0; i < 25; i++) {
+          if (!checked[i] || i === 12) continue;
+          if (isGood[i]) {
+            pts += 2;
+            bonus++;
+          } else {
+            pts += 1;
+          }
+        }
+        return { pts, bonus };
+      }
+
+      function render() {
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        const bingoCells = new Set(bingoLines.flat());
+
+        squares.forEach((sq, i) => {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          if (i === 12) cell.classList.add("free");
+          if (isGood[i] && i !== 12) cell.classList.add("good-word");
+          if (checked[i] && i !== 12) cell.classList.add("checked");
+          if (bingoCells.has(i)) cell.classList.add("bingo-line");
+          cell.textContent = sq;
+          cell.onclick = () => toggle(i);
+          grid.appendChild(cell);
+        });
+
+        const { pts, bonus } = getScore();
+        const scoreEl = document.getElementById("score");
+        if (bonus > 0) {
+          scoreEl.innerHTML =
+            pts + ' pts <span class="bonus">(' + bonus + " bonus)</span>";
+        } else {
+          scoreEl.textContent = pts + " pts";
+        }
+
+        const banner = document.getElementById("banner");
+        if (bingoLines.length > 0) {
+          banner.className = "banner show";
+          banner.textContent =
+            bingoLines.length > 1 ? "BINGO! Multiple lines." : "BINGO!";
+        } else {
+          banner.className = "banner";
+        }
+      }
+
+      function toggle(i) {
+        if (i === 12) return;
+        checked[i] = !checked[i];
+        checkBingo();
+        render();
+      }
+
+      function newCard() {
+        generateCard();
+        checked = Array(25).fill(false);
+        checked[12] = true;
+        bingoLines = [];
+        render();
+      }
+
+      function shareResult() {
+        const name =
+          document.getElementById("playerName").value.trim() || "Anonymous";
+        const hasBingo = bingoLines.length > 0;
+        const { pts, bonus } = getScore();
+
+        let grid = "";
+        for (let r = 0; r < 5; r++) {
+          let row = "";
+          for (let c = 0; c < 5; c++) {
+            const i = r * 5 + c;
+            if (i === 12) row += "⭐";
+            else if (checked[i] && isGood[i]) row += "💖";
+            else if (checked[i]) row += "🟩";
+            else row += "⬜";
+          }
+          grid += row + "\n";
+        }
+
+        let text = "Transport Planning Bingo\n";
+        text += name + " — " + pts + " pts";
+        if (bonus > 0) text += " (" + bonus + " bonus)";
+        text += "\n" + grid;
+        if (hasBingo) {
+          text += bingoLines.length > 1 ? "BINGO! Multiple lines." : "BINGO!";
+        } else {
+          text += "No bingo yet";
+        }
+        text += "\n\nPlay: numbatgeospatial.xyz/bingo";
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => showToast());
+        }
+      }
+
+      function showToast() {
+        const t = document.getElementById("toast");
+        t.className = "toast";
+        void t.offsetWidth;
+        t.className = "toast show";
+        setTimeout(() => (t.className = "toast"), 2000);
+      }
+
+      newCard();
+    </script>
+  </body>
+</html>
